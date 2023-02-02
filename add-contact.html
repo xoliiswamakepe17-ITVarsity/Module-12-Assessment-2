@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Contact App | Add</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="resources\css\bootstrap.min.css">
+        <link rel="stylesheet" href="resources/css/custom.css">
+        <link rel="stylesheet" href="resources/customCss.css">
+    </head>
+    <body>
+           <!-------------------- Header -------------------->
+   <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a href="index.html" class="navbar-brand">
+            <!-- Logo Image -->
+            <img src="resources/images/pngkey.com-contacts-icon-png-2026158.png" width="100px" alt="" class="d-inline-block align-middle mr-2">
+            <!-- Logo Text -->
+            <span class="text-uppercase font-weight-bold">Contact Book APP </span>
+          </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbar">
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-item nav-link"> Home</a>
+                <a href="add-contact.html" class="nav-item nav-link">Add Contact</a>
+            </div>
+        </div>
+        
+    </nav>
+</header>
+<!-------------------- Header -------------------->
+        <div class="content">
+        <br/>
+        <form id="editForm">
+            <span class="badge badge-info" for="firstname">First name</span>
+            <input class="form-control" type="text" name="firstname" id="firstname" ><br/>
+            <span class="badge badge-info"  for="lastname">Last name</span>
+            <input class="form-control" type="text" name="lastname" id="lastname" ><br/>
+            <span class="badge badge-info"  for="mobile">Mobile</span>
+            <input class="form-control" type="text" name="mobile" id="mobile" ><br/>
+            <span class="badge badge-info"  for="email">Email</span>
+            <input class="form-control" type="text" name="email" id="email" ><br/>
+            <span class="badge badge-info" for="avatar">Select a file</span><br/>
+            <input class="form-control"   type="file" name="avatar" id="avatar"><br/>
+            <button class="btn btn-info" type="submit" id="submitForm">Submit</button>
+        </form>
+        <br/>
+        <button class="btn btn-primary" id="homeLink" type="button">Home</button>
+        </div>
+        
+        <script src="config.js"></script>
+        <script>
+            document.getElementById("submitForm").addEventListener('click', submitForm);
+            document.getElementById("homeLink").addEventListener('click', homeLink);
+            
+            function submitForm(e){
+                e.preventDefault();
+                
+                const form = new FormData(document.querySelector('#editForm'));
+                form.append('apiKey', apiKey);
+                
+                fetch(rootPath + 'controller/insert-contact/', {
+                    method: 'POST',
+                    headers: {'Accept': 'application/json, *.*'},
+                    body: form
+                })
+                .then(function(response){
+                    return response.text();
+                })
+                .then(function(data){
+                    if(data == "1"){
+                       alert("contact added.");
+                        homeLink();
+                    }else{
+                        alert(data);
+                        homeLink();
+                    }
+                })
+            }
+            
+            function homeLink(){
+                window.open("index.html", "_self");
+            }
+        
+        </script>
+                       <div class="footer">
+                    
+                      </div>
+            
+                      <script src="resources\js\jquery-3.4.1.min.js"></script>
+                      <script src="resources\js\bootstrap.bundle.min.js"></script>    </body>
+</html>

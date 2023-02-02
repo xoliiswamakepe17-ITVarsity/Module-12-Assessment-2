@@ -1,0 +1,165 @@
+<html>
+    <head>
+        <title>Contact App |Edit </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="resources\css\bootstrap.min.css">
+        <link rel="stylesheet" href="resources/css/custom.css">
+        <link rel="stylesheet" href="resources/customCss.css">
+        
+    </head>
+    <body onload="getContact()">
+           <!-------------------- Header -------------------->
+   <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a href="index.html" class="navbar-brand">
+            <!-- Logo Image -->
+            <img src="resources/images/pngkey.com-contacts-icon-png-2026158.png" width="100px" alt="" class="d-inline-block align-middle mr-2">
+            <!-- Logo Text -->
+            <span class="text-uppercase font-weight-bold">Contact Book APP </span>
+          </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbar">
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-item nav-link"> Home</a>
+                <a href="add-contact.html" class="nav-item nav-link">Add Contact</a>
+            </div>
+        </div>
+        
+    </nav>
+</header>
+<!-------------------- Header -------------------->
+<div class="content">
+        <br/>
+        <div id="avatarImage"></div>
+        <form id="editForm">
+            <span class="badge badge-info" for="firstname">First name</span>
+            <input class="form-control" type="text" name="firstname" id="firstname" readonly><br/>
+            <span class="badge badge-info"  for="lastname">Last name</span>
+            <input class="form-control" type="text" name="lastname" id="lastname" readonly><br/>
+            <span class="badge badge-info"  for="mobile">Mobile</span>
+            <input class="form-control" type="text" name="mobile" id="mobile" readonly><br/>
+            <span class="badge badge-info"  for="email">Email</span>
+            <input class="form-control" type="text" name="email" id="email" readonly><br/>
+            <span for="avatar" id="avatarLabel" hidden>Change profile image</span><br/>
+            <input class="btn btn-info" type="file" name="avatar" id="avatar" hidden><br/>
+            <br/> 
+            <button class="btn btn-info" type="submit" id="submitForm" hidden>Submit</button>
+        </form>
+        <button class="btn btn-primary" id="homeLink" type="button">Home</button>
+        <button class="btn btn-info" id="editContact" type="button">Edit</button>
+        <button class="btn btn-danger" id="deleteContact" type="button">Delete</button>
+        <br>
+        <br>
+        <br>
+</div>
+        
+        
+        <script src="config.js"></script>
+        <script>
+            var id = getId();
+            document.getElementById("homeLink").addEventListener('click', homeLink);
+            document.getElementById("editContact").addEventListener('click', editContact);
+            document.getElementById("submitForm").addEventListener('click', submitForm);
+            document.getElementById("deleteContact").addEventListener('click', deleteContact);
+            
+            function getId(){
+                var url = window.location.href;
+                var pos = url.search("=");
+                var id = url.slice(pos +1);
+                return id;
+            }
+            
+            function getContact(){
+                fetch(rootPath + 'controller/get-contacts/?id=' + id)
+                .then(function(response){
+                    return response.json();
+                })
+                .then(function(data){
+                    displayOutput(data);
+                
+                })
+            }
+            
+            function homeLink(){
+                window.open("index.html", "_self");
+            }
+            
+            function displayOutput(data){
+                avatarImg =`
+                    <img src="${rootPath}/controller/uploads/${data[0].avatar}" width="200" />
+                `
+                document.getElementById("avatarImage").innerHTML = avatarImg;
+                document.getElementById("firstname").value = data[0].firstname;
+                document.getElementById("lastname").value = data[0].lastname;
+                document.getElementById("mobile").value = data[0].mobile;
+                document.getElementById("email").value = data[0].email;
+             
+            }
+            
+            function editContact(){
+                document.getElementById("firstname").readOnly = false;
+                document.getElementById("lastname").readOnly = false;
+                document.getElementById("mobile").readOnly = false;
+                document.getElementById("email").readOnly = false;
+                document.getElementById("avatar").hidden = false;
+                document.getElementById("submitForm").hidden = false;
+            }
+            
+            function submitForm(e){
+                e.preventDefault();
+                
+                const form = new FormData(document.querySelector("#editForm"));
+                form.append('apiKey', apiKey);
+                form.append('id', id);
+                
+                 fetch(rootPath + 'controller/edit-contact/', {
+                    method: 'POST',
+                    headers: {'Accept': 'application/json, *.*'},
+                    body: form
+                })
+                  .then(function(response){
+                    return response.text();
+                })
+                .then(function(data){
+                    if(data == "1"){
+                       alert("Contact edited.");
+                        homeLink();
+                    }else{
+                        alert(data);
+                        homeLink();
+                    }
+                })
+            }
+            
+            function deleteContact(){
+                var confirmDelete = confirm("Delete contact. Are you sure?");
+                
+                if(confirmDelete == true){
+                    fetch(rootPath + 'controller/delete-contact/?id=' + id)
+                    .then(function(response){
+                        return response.text();
+                    })
+                    .then(function(data){
+                        if(data == "1"){
+                            homeLink();
+                        }else {
+                            alert(data);
+                        }
+                        
+                    })
+                }
+            }
+        
+        </script>
+                               <div class="footer">
+                            
+                              </div>
+                    
+                              <script src="resources\js\jquery-3.4.1.min.js"></script>
+                              <script src="resources\js\bootstrap.bundle.min.js"></script>    </body>
+    </body>
+</html>
